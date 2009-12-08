@@ -119,7 +119,7 @@ int do_args (int argc, char *argv[], char *envp[])
 char * json_from_env ( char *string, const char *env_name, const char *name )
 {
   char *var = NULL;
-  char buffer[MAX_BUFF_SIZE] = "";
+  char buffer[MAX_BUFF_SIZE] = ""; /* FIXME should do dynamic allocation */
 
   if ( strlen (env_name) == 0 || strlen (name) == 0 )
   {
@@ -178,7 +178,7 @@ char * json_from_env ( char *string, const char *env_name, const char *name )
 int do_env ( char *action_type, char **res )
 {
   char *clientid, *domain;
-  char json[MAX_BUFF_SIZE] = "";
+  char json[MAX_BUFF_SIZE] = ""; /* FIXME should do dynamic allocation */
   int n = 0;
 
   json_from_env ( json, "DNSMASQ_CLIENT_ID", "client_id" );
@@ -187,19 +187,30 @@ int do_env ( char *action_type, char **res )
   json_from_env ( json, "DNSMASQ_TIME_REMAINING", "time_remaining");
 
   /* mutually exclusives */
+  /* FIXME should check that they are not set at the same time */
   json_from_env ( json, "DNSMASQ_LEASE_LENGTH", "lease_length" );
   json_from_env ( json, "DNSMASQ_LEASE_EXPIRES", "lease_expires" );
 
-  /* valid for add|del only */
-  json_from_env ( json, "DNSMASQ_INTERFACE", "interface" );
+  if ( strcmp (action_type, "del") == 0 )
+  {
+    json_from_env ( json, "DNSMASQ_INTERFACE", "interface" );
+  }
 
-  /* valid for old|add only */
-  json_from_env ( json, "DNSMASQ_VENDOR_CLASS", "vendor_class" );
-  json_from_env ( json, "DNSMASQ_SUPPLIED_HOSTNAME", "supplied_hostname" );
-  /* FIXME how to deal with N USER_CLASS? */
+  if ( strcmp (action_type, "add") == 0 )
+  {
+    json_from_env ( json, "DNSMASQ_INTERFACE", "interface" );
+    json_from_env ( json, "DNSMASQ_VENDOR_CLASS", "vendor_class" );
+    json_from_env ( json, "DNSMASQ_SUPPLIED_HOSTNAME", "supplied_hostname" );
+    /* FIXME how to deal with N USER_CLASS? */
+  }
 
-  /* valid for old only */
-  json_from_env ( json, "DNSMASQ_OLD_HOSTNAME", "old_hostname" );
+  if ( strcmp (action_type, "old") == 0 )
+  {
+    json_from_env ( json, "DNSMASQ_VENDOR_CLASS", "vendor_class" );
+    json_from_env ( json, "DNSMASQ_SUPPLIED_HOSTNAME", "supplied_hostname" );
+    json_from_env ( json, "DNSMASQ_OLD_HOSTNAME", "old_hostname" );
+    /* FIXME how to deal with N USER_CLASS? */
+  }
 
   n = strlen (json);
   *res = calloc (MAX_BUFF_SIZE, sizeof(char));

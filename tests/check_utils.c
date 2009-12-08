@@ -14,6 +14,7 @@
 #include <check.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #include "../src/dhcpmsg.h"
 
 START_TEST (test_noop)
@@ -98,10 +99,16 @@ START_TEST (test_do_env)
 {
   char *action = "add";
   char *p;
+  char *name="DNSMASQ_DOMAIN";
+  char *value="test";
+  int n = 11; /* domain:test */
 
   fail_unless ( do_env (action, &p) == 0,
       "correct empty environement\n" );
-  /* FIXME how to test env? */
+  fail_unless ( setenv(name, value, 0) == 0,
+      "could not initialize environment\n");
+  fail_unless ( do_env (action, &p) == n,
+      "do_env did not return correct size\n" );
 }
 END_TEST
 
