@@ -19,7 +19,7 @@
 int main (int argc, char *argv[], char *envp[])
 {
   extern bool noneth, known;
-  extern char *action, *macaddr, *ip, *hostname;
+  extern char *action, *macaddr, *ip, *hostname, *uri;
 
   char *str_json;
 
@@ -27,8 +27,22 @@ int main (int argc, char *argv[], char *envp[])
     return 1;
   else /* correct arguments */
   {
+    if ( read_config () == 1 )
+    {
+      fprintf (stderr, "error reading configuration file, aborting\n");
+      return 1;
+    }
+
+    if ( uri )
+      printf ("uri for the webapp is: %s\n",uri);
+    else
+    {
+      fprintf (stderr, "uri not defined in configuration file, aborting\n");
+      return 1;
+    }
+
     if ( noneth )
-        printf ("protocol type for the mac address is non ethernet\n");
+      printf ("protocol type for the mac address is non ethernet\n");
 
     if ( argc == 4 )
       printf ("action:\t%s\nmac:\t%s\nip:\t%s\n", action, macaddr, ip);

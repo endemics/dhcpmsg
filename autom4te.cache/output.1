@@ -877,6 +877,7 @@ ac_ct_F77
 LIBTOOL
 CHECK_TRUE
 CHECK_FALSE
+LIBCONFIG
 LIB@&t@OBJS
 LTLIBOBJS'
 ac_subst_files=''
@@ -1493,6 +1494,7 @@ Optional Packages:
   --with-pic              try to use only PIC/non-PIC objects @<:@default=use
                           both@:>@
   --with-tags@<:@=TAGS@:>@      include additional configurations @<:@automatic@:>@
+  --with-config=path Specify the path to config file (default is /etc/dhcpmsg.conf)
 
 Some influential environment variables:
   PKG_CONFIG  path to pkg-config utility
@@ -20803,6 +20805,85 @@ else
   CHECK_FALSE=
 fi
 
+
+# Check whether --with-config was given.
+if test "${with_config+set}" = set; then
+  withval=$with_config;  with_config="$withval" 
+else
+   with_config="/etc/dhcpmsg.conf"
+fi
+
+
+cat >>confdefs.h <<_ACEOF
+@%:@define CONFIG_FILE "$with_config"
+_ACEOF
+
+{ echo "$as_me:$LINENO: checking for config_init in -lconfig" >&5
+echo $ECHO_N "checking for config_init in -lconfig... $ECHO_C" >&6; }
+if test "${ac_cv_lib_config_config_init+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lconfig  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char config_init ();
+int
+main ()
+{
+return config_init ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext &&
+       $as_test_x conftest$ac_exeext; then
+  ac_cv_lib_config_config_init=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_cv_lib_config_config_init=no
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ echo "$as_me:$LINENO: result: $ac_cv_lib_config_config_init" >&5
+echo "${ECHO_T}$ac_cv_lib_config_config_init" >&6; }
+if test $ac_cv_lib_config_config_init = yes; then
+  LIBCONFIG=-lconfig
+fi
+
+
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -21618,11 +21699,12 @@ ac_ct_F77!$ac_ct_F77$ac_delim
 LIBTOOL!$LIBTOOL$ac_delim
 CHECK_TRUE!$CHECK_TRUE$ac_delim
 CHECK_FALSE!$CHECK_FALSE$ac_delim
+LIBCONFIG!$LIBCONFIG$ac_delim
 LIB@&t@OBJS!$LIB@&t@OBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 14; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 15; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5

@@ -16,7 +16,10 @@
 #include <stdbool.h>
 #include <string.h>
 #include <regex.h>
+#include <libconfig.h>
+
 #include "dhcpmsg.h"
+#include "../config.h"  /* for CONFIG_FILE */
 
 bool noneth = false;    /* true if mac address is not an ethernet address */
 bool known = false;     /* true if address is statically assigned */
@@ -24,6 +27,7 @@ char *action = NULL;    /* add|del|old */
 char *macaddr = NULL;   /* the mac address */
 char *ip = NULL;        /* the ip address */
 char *hostname = NULL;  /* the optional hostname */
+char *uri = NULL;       /* the webapp uri */
 
 /** check if string matched regex
  * returns:
@@ -269,3 +273,44 @@ int do_env ( char *action_type, char **res )
 
   return n;
 }
+
+/*
+ * thanks to http://blog.fupps.com/2009/09/17/reading-configuration-files-with-libconfig/
+ */
+int read_config ( void )
+{
+  config_t cfg, *cf;
+  const char *buf;
+  extern char *uri;
+
+  int n = 0;
+
+  cf = &cfg;
+  config_init(cf);
+                
+  if (!config_read_file(cf, CONFIG_FILE))
+  {
+    /* need a more recent version
+     *     fprintf( stderr, "%s:%d - %s\n",
+     *           config_error_file(cf),
+     *                 config_error_line(cf),
+     *                       config_error_text(cf));
+     */
+    fprintf( stderr, "Error in config line: %d - %s\n",
+      config_error_line(cf),
+      config_error_text(cf));
+
+    config_destroy(cf);
+    return 1;
+  }
+
+  config_lookup_string(cf, "uri", &buf);
+
+  n = strlen (buf);
+  uri = calloc (n+1, sizeof(char));
+  memcpy(uri, buf, n);
+  config_destroy(cf);
+
+  return 0;
+}
+

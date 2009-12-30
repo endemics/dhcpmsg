@@ -55,8 +55,11 @@ libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libutils_la_LIBADD =
 am__libutils_la_SOURCES_DIST = utils.c
-@CHECK_TRUE@am_libutils_la_OBJECTS = utils.lo
+@CHECK_TRUE@am_libutils_la_OBJECTS = libutils_la-utils.lo
 libutils_la_OBJECTS = $(am_libutils_la_OBJECTS)
+libutils_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(libutils_la_CFLAGS) \
+	$(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 @CHECK_TRUE@am_libutils_la_rpath = -rpath $(libdir)
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
@@ -64,6 +67,8 @@ am__dhcpmsg_SOURCES_DIST = dhcpmsg.c utils.c
 @CHECK_FALSE@am__objects_1 = dhcpmsg-utils.$(OBJEXT)
 am_dhcpmsg_OBJECTS = dhcpmsg-dhcpmsg.$(OBJEXT) $(am__objects_1)
 dhcpmsg_OBJECTS = $(am_dhcpmsg_OBJECTS)
+am__DEPENDENCIES_1 =
+@CHECK_FALSE@dhcpmsg_DEPENDENCIES = $(am__DEPENDENCIES_1)
 @CHECK_TRUE@dhcpmsg_DEPENDENCIES = libutils.la
 dhcpmsg_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(dhcpmsg_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
@@ -123,6 +128,7 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@
+LIBCONFIG = @LIBCONFIG@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
@@ -200,6 +206,8 @@ top_srcdir = @top_srcdir@
 dhcpmsg_SOURCES = dhcpmsg.c $(am__append_1)
 @CHECK_TRUE@lib_LTLIBRARIES = libutils.la
 @CHECK_TRUE@libutils_la_SOURCES = utils.c
+@CHECK_TRUE@libutils_la_CFLAGS = $(LIBCONFIG)
+@CHECK_FALSE@dhcpmsg_LDADD = $(LIBCONFIG)
 @CHECK_TRUE@dhcpmsg_LDADD = libutils.la
 @CHECK_FALSE@dhcpmsg_CFLAGS = $(AM_CFLAGS)
 all: all-am
@@ -263,7 +271,7 @@ clean-libLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libutils.la: $(libutils_la_OBJECTS) $(libutils_la_DEPENDENCIES) 
-	$(LINK) $(am_libutils_la_rpath) $(libutils_la_OBJECTS) $(libutils_la_LIBADD) $(LIBS)
+	$(libutils_la_LINK) $(am_libutils_la_rpath) $(libutils_la_OBJECTS) $(libutils_la_LIBADD) $(LIBS)
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
 	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
@@ -304,7 +312,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhcpmsg-dhcpmsg.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhcpmsg-utils.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libutils_la-utils.Plo@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -326,6 +334,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+
+libutils_la-utils.lo: utils.c
+@am__fastdepCC_TRUE@	$(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libutils_la_CFLAGS) $(CFLAGS) -MT libutils_la-utils.lo -MD -MP -MF $(DEPDIR)/libutils_la-utils.Tpo -c -o libutils_la-utils.lo `test -f 'utils.c' || echo '$(srcdir)/'`utils.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/libutils_la-utils.Tpo $(DEPDIR)/libutils_la-utils.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='utils.c' object='libutils_la-utils.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libutils_la_CFLAGS) $(CFLAGS) -c -o libutils_la-utils.lo `test -f 'utils.c' || echo '$(srcdir)/'`utils.c
 
 dhcpmsg-dhcpmsg.o: dhcpmsg.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dhcpmsg_CFLAGS) $(CFLAGS) -MT dhcpmsg-dhcpmsg.o -MD -MP -MF $(DEPDIR)/dhcpmsg-dhcpmsg.Tpo -c -o dhcpmsg-dhcpmsg.o `test -f 'dhcpmsg.c' || echo '$(srcdir)/'`dhcpmsg.c

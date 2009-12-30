@@ -3,8 +3,10 @@ dhcpmsg_SOURCES = dhcpmsg.c
 if CHECK
 lib_LTLIBRARIES = libutils.la
 libutils_la_SOURCES = utils.c
+libutils_la_CFLAGS = $(LIBCONFIG)
 dhcpmsg_LDADD = libutils.la
 else
 dhcpmsg_SOURCES += utils.c
 dhcpmsg_CFLAGS = $(AM_CFLAGS)
+dhcpmsg_LDADD =  $(LIBCONFIG)
 endif

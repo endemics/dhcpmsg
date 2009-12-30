@@ -17,4 +17,11 @@ AC_ARG_ENABLE(check,
                    *) AC_MSG_ERROR(bad value ${enableval} for --enable-check) ;;
                   esac],[check=false])
 AM_CONDITIONAL(CHECK, test x$check = xtrue)
+AC_ARG_WITH(config,
+                  [  --with-config=path Specify the path to config file (default is /etc/dhcpmsg.conf)],
+                  [ with_config="$withval" ],
+                  [ with_config="/etc/dhcpmsg.conf"])
+AC_DEFINE_UNQUOTED([CONFIG_FILE], ["$with_config"], [Path to the config file])
+AC_CHECK_LIB([config], [config_init], [LIBCONFIG=-lconfig])
+AC_SUBST([LIBCONFIG])
 AC_OUTPUT
