@@ -14,7 +14,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+
 #include "dhcpmsg.h"
+#include "../config.h"  /* for CONFIG_FILE  */
 
 int main (int argc, char *argv[], char *envp[])
 {
@@ -27,7 +29,7 @@ int main (int argc, char *argv[], char *envp[])
     return 1;
   else /* correct arguments */
   {
-    if ( read_config () == 1 )
+    if ( read_config ( CONFIG_FILE ) == 1 )
     {
       fprintf (stderr, "error reading configuration file, aborting\n");
       return 1;

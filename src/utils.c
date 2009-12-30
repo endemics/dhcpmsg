@@ -19,7 +19,6 @@
 #include <libconfig.h>
 
 #include "dhcpmsg.h"
-#include "../config.h"  /* for CONFIG_FILE */
 
 bool noneth = false;    /* true if mac address is not an ethernet address */
 bool known = false;     /* true if address is statically assigned */
@@ -277,7 +276,7 @@ int do_env ( char *action_type, char **res )
 /*
  * thanks to http://blog.fupps.com/2009/09/17/reading-configuration-files-with-libconfig/
  */
-int read_config ( void )
+int read_config ( char *configfile )
 {
   config_t cfg, *cf;
   const char *buf;
@@ -288,13 +287,13 @@ int read_config ( void )
   cf = &cfg;
   config_init(cf);
                 
-  if (!config_read_file(cf, CONFIG_FILE))
+  if (!config_read_file(cf, configfile))
   {
     /* need a more recent version
-     *     fprintf( stderr, "%s:%d - %s\n",
-     *           config_error_file(cf),
-     *                 config_error_line(cf),
-     *                       config_error_text(cf));
+     *fprintf( stderr, "%s:%d - %s\n",
+     *  config_error_file(cf),
+     *  config_error_line(cf),
+     *  config_error_text(cf));
      */
     fprintf( stderr, "Error in config line: %d - %s\n",
       config_error_line(cf),

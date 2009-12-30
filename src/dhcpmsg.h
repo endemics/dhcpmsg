@@ -16,9 +16,10 @@
 
 #define MAX_BUFF_SIZE 1024
 
-int regex_match (const char *regex, char *string);
+int regex_match ( const char *regex, char *string );
 int check_mac ( char *mac_address );
-int do_args (int argc, char *argv[], char *envp[]);
+int do_args ( int argc, char *argv[], char *envp[] );
 int do_env ( char *action_type, char **res );
+int read_config ( char *configfile );
 
 #endif /* DHCPMSG_H */
