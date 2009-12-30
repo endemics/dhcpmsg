@@ -18,7 +18,7 @@
 
 int main (int argc, char *argv[], char *envp[])
 {
-  extern bool noneth;
+  extern bool noneth, known;
   extern char *action, *macaddr, *ip, *hostname;
 
   char *str_json;
@@ -36,7 +36,11 @@ int main (int argc, char *argv[], char *envp[])
       printf ("action:\t%s\nmac:\t%s\nip:\t%s\nhostname:\t%s\n", action, macaddr, ip,hostname);
 
     do_env ( action, &str_json );
-    printf ("environment variables:\t%s\n", str_json);
+
+    if ( known )
+      printf ("address statically assigned\n");
+
+    printf ("environment variables:\t%s\n\n", str_json);
 
     return 0;
   }

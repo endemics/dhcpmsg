@@ -19,6 +19,7 @@
 #include "dhcpmsg.h"
 
 bool noneth = false;    /* true if mac address is not an ethernet address */
+bool known = false;     /* true if address is statically assigned */
 char *action = NULL;    /* add|del|old */
 char *macaddr = NULL;   /* the mac address */
 char *ip = NULL;        /* the ip address */
@@ -172,8 +173,8 @@ char * json_from_env ( char *string, const char *env_name, const char *name )
  * - DNSMASQ_LEASE_EXPIRES (otherwise)
  * - DNSMASQ_TIME_REMAINING
  * - DNSMASQ_RELAY_ADDRESS
- * for add|del
  * - DNSMASQ_INTERFACE
+ * - DNSMASQ_TAGS
  * for old|add actions:
  * - DNSMASQ_VENDOR_CLASS
  * - DNSMASQ_SUPPLIED_HOSTNAME
@@ -183,29 +184,84 @@ char * json_from_env ( char *string, const char *env_name, const char *name )
  */
 int do_env ( char *action_type, char **res )
 {
+  extern bool known;  /* true if address is statically assigned */
+
   char *clientid, *domain;
   char json[MAX_BUFF_SIZE] = "";
+  char buff[MAX_BUFF_SIZE] = "",buff2[MAX_BUFF_SIZE] = "";  /* temp buffers */
+  int i = 0;  /* holy loop counter */
   int n = 0;
 
   json_from_env ( json, "DNSMASQ_CLIENT_ID", "client_id" );
   json_from_env ( json, "DNSMASQ_DOMAIN", "domain" );
   json_from_env ( json, "DNSMASQ_RELAY_ADDRESS", "relay_address" );
-  json_from_env ( json, "DNSMASQ_TIME_REMAINING", "time_remaining");
+  json_from_env ( json, "DNSMASQ_TIME_REMAINING", "time_remaining" );
+
+  if ( getenv("DNSMASQ_TAGS") )
+  {
+    json_from_env ( json, "DNSMASQ_TAGS", "tags");
+    if ( regex_match ( "^(..*  *)*known(  *..*)*$", getenv("DNSMASQ_TAGS") ) == 0 )
+    {
+      known = true;
+    }
+  }
 
   /* mutually exclusives */
+  if ( getenv("DNSMASQ_LEASE_LENGTH") && getenv("DNSMASQ_LEASE_EXPIRES") )
+    fprintf(stderr,
+      "Error: both environment variables DNSMASQ_LEASE_LENGTH %s",
+      "and DNSMASQ_LEASE_EXPIRES are defined\n");
   json_from_env ( json, "DNSMASQ_LEASE_LENGTH", "lease_length" );
   json_from_env ( json, "DNSMASQ_LEASE_EXPIRES", "lease_expires" );
 
-  /* valid for add|del only */
-  json_from_env ( json, "DNSMASQ_INTERFACE", "interface" );
+  if ( strcmp (action_type, "del") == 0 )
+  {
+    json_from_env ( json, "DNSMASQ_INTERFACE", "interface" );
+  }
 
-  /* valid for old|add only */
-  json_from_env ( json, "DNSMASQ_VENDOR_CLASS", "vendor_class" );
-  json_from_env ( json, "DNSMASQ_SUPPLIED_HOSTNAME", "supplied_hostname" );
-  /* FIXME how to deal with N USER_CLASS? */
+  if ( strcmp (action_type, "add") == 0 )
+  {
+    json_from_env ( json, "DNSMASQ_INTERFACE", "interface" );
+    json_from_env ( json, "DNSMASQ_VENDOR_CLASS", "vendor_class" );
+    json_from_env ( json, "DNSMASQ_SUPPLIED_HOSTNAME", "supplied_hostname" );
 
-  /* valid for old only */
-  json_from_env ( json, "DNSMASQ_OLD_HOSTNAME", "old_hostname" );
+    for (i = 0;  ;i++)
+    {
+      sprintf(buff,"DNSMASQ_USER_CLASS%u", i);
+      sprintf(buff2,"user_class%u", i);
+      if (getenv(buff))
+      {
+        json_from_env(  json, buff, buff2);
+      }
+      else
+        break;
+    }
+
+  }
+
+  if ( strcmp (action_type, "old") == 0 )
+  {
+    json_from_env ( json, "DNSMASQ_VENDOR_CLASS", "vendor_class" );
+    json_from_env ( json, "DNSMASQ_SUPPLIED_HOSTNAME", "supplied_hostname" );
+    json_from_env ( json, "DNSMASQ_OLD_HOSTNAME", "old_hostname" );
+
+    if ( getenv("DNSMASQ_INTERFACE") ) /* can be missing */
+    {
+      json_from_env ( json, "DNSMASQ_INTERFACE", "interface" );
+    }
+
+    for (i = 0;  ;i++)
+    {
+      sprintf(buff,"DNSMASQ_USER_CLASS%u", i);
+      sprintf(buff2,"user_class%u", i);
+      if (getenv(buff))
+      {
+        json_from_env(  json, buff, buff2);
+      }
+      else
+        break;
+    }
+  }
 
   n = strlen (json);
   *res = calloc (MAX_BUFF_SIZE, sizeof(char));
