@@ -875,6 +875,8 @@ F77
 FFLAGS
 ac_ct_F77
 LIBTOOL
+CHECK_TRUE
+CHECK_FALSE
 LIB@&t@OBJS
 LTLIBOBJS'
 ac_subst_files=''
@@ -1482,6 +1484,7 @@ Optional Features:
   --disable-dependency-tracking  speeds up one-time build
   --enable-dependency-tracking   do not reject slow dependency extractors
   --disable-libtool-lock  avoid locking (might break parallel builds)
+  --enable-check    Libtool linking to allow check
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -20791,6 +20794,27 @@ ac_config_headers="$ac_config_headers config.h"
 
 ac_config_files="$ac_config_files Makefile src/Makefile tests/Makefile"
 
+# Check whether --enable-check was given.
+if test "${enable_check+set}" = set; then
+  enableval=$enable_check; case "${enableval}" in
+                    yes) check=true ;;
+                   no)  check=false ;;
+                   *) { { echo "$as_me:$LINENO: error: bad value ${enableval} for --enable-check" >&5
+echo "$as_me: error: bad value ${enableval} for --enable-check" >&2;}
+   { (exit 1); exit 1; }; } ;;
+                  esac
+else
+  check=false
+fi
+
+ if test x$check = xtrue; then
+  CHECK_TRUE=
+  CHECK_FALSE='#'
+else
+  CHECK_TRUE='#'
+  CHECK_FALSE=
+fi
+
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -20912,6 +20936,13 @@ if test -z "${am__fastdepCC_TRUE}" && test -z "${am__fastdepCC_FALSE}"; then
   { { echo "$as_me:$LINENO: error: conditional \"am__fastdepCC\" was never defined.
 Usually this means the macro was only invoked conditionally." >&5
 echo "$as_me: error: conditional \"am__fastdepCC\" was never defined.
+Usually this means the macro was only invoked conditionally." >&2;}
+   { (exit 1); exit 1; }; }
+fi
+if test -z "${CHECK_TRUE}" && test -z "${CHECK_FALSE}"; then
+  { { echo "$as_me:$LINENO: error: conditional \"CHECK\" was never defined.
+Usually this means the macro was only invoked conditionally." >&5
+echo "$as_me: error: conditional \"CHECK\" was never defined.
 Usually this means the macro was only invoked conditionally." >&2;}
    { (exit 1); exit 1; }; }
 fi
@@ -21597,11 +21628,13 @@ F77!$F77$ac_delim
 FFLAGS!$FFLAGS$ac_delim
 ac_ct_F77!$ac_ct_F77$ac_delim
 LIBTOOL!$LIBTOOL$ac_delim
+CHECK_TRUE!$CHECK_TRUE$ac_delim
+CHECK_FALSE!$CHECK_FALSE$ac_delim
 LIB@&t@OBJS!$LIB@&t@OBJS$ac_delim
 LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 12; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 14; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5

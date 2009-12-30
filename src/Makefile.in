@@ -34,6 +34,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = dhcpmsg$(EXEEXT)
+@CHECK_FALSE@am__append_1 = utils.c
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -53,13 +54,20 @@ am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)"
 libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libutils_la_LIBADD =
-am_libutils_la_OBJECTS = utils.lo
+am__libutils_la_SOURCES_DIST = utils.c
+@CHECK_TRUE@am_libutils_la_OBJECTS = utils.lo
 libutils_la_OBJECTS = $(am_libutils_la_OBJECTS)
+@CHECK_TRUE@am_libutils_la_rpath = -rpath $(libdir)
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
-am_dhcpmsg_OBJECTS = dhcpmsg.$(OBJEXT)
+am__dhcpmsg_SOURCES_DIST = dhcpmsg.c utils.c
+@CHECK_FALSE@am__objects_1 = dhcpmsg-utils.$(OBJEXT)
+am_dhcpmsg_OBJECTS = dhcpmsg-dhcpmsg.$(OBJEXT) $(am__objects_1)
 dhcpmsg_OBJECTS = $(am_dhcpmsg_OBJECTS)
-dhcpmsg_DEPENDENCIES = libutils.la
+@CHECK_TRUE@dhcpmsg_DEPENDENCIES = libutils.la
+dhcpmsg_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=link $(CCLD) $(dhcpmsg_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
+	$(LDFLAGS) -o $@
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -73,7 +81,8 @@ LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 SOURCES = $(libutils_la_SOURCES) $(dhcpmsg_SOURCES)
-DIST_SOURCES = $(libutils_la_SOURCES) $(dhcpmsg_SOURCES)
+DIST_SOURCES = $(am__libutils_la_SOURCES_DIST) \
+	$(am__dhcpmsg_SOURCES_DIST)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -188,10 +197,11 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-lib_LTLIBRARIES = libutils.la
-libutils_la_SOURCES = utils.c
-dhcpmsg_SOURCES = dhcpmsg.c
-dhcpmsg_LDADD = libutils.la
+dhcpmsg_SOURCES = dhcpmsg.c $(am__append_1)
+@CHECK_TRUE@lib_LTLIBRARIES = libutils.la
+@CHECK_TRUE@libutils_la_SOURCES = utils.c
+@CHECK_TRUE@dhcpmsg_LDADD = libutils.la
+@CHECK_FALSE@dhcpmsg_CFLAGS = $(AM_CFLAGS)
 all: all-am
 
 .SUFFIXES:
@@ -253,7 +263,7 @@ clean-libLTLIBRARIES:
 	  rm -f "$${dir}/so_locations"; \
 	done
 libutils.la: $(libutils_la_OBJECTS) $(libutils_la_DEPENDENCIES) 
-	$(LINK) -rpath $(libdir) $(libutils_la_OBJECTS) $(libutils_la_LIBADD) $(LIBS)
+	$(LINK) $(am_libutils_la_rpath) $(libutils_la_OBJECTS) $(libutils_la_LIBADD) $(LIBS)
 install-binPROGRAMS: $(bin_PROGRAMS)
 	@$(NORMAL_INSTALL)
 	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
@@ -284,7 +294,7 @@ clean-binPROGRAMS:
 	done
 dhcpmsg$(EXEEXT): $(dhcpmsg_OBJECTS) $(dhcpmsg_DEPENDENCIES) 
 	@rm -f dhcpmsg$(EXEEXT)
-	$(LINK) $(dhcpmsg_OBJECTS) $(dhcpmsg_LDADD) $(LIBS)
+	$(dhcpmsg_LINK) $(dhcpmsg_OBJECTS) $(dhcpmsg_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -292,7 +302,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhcpmsg.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhcpmsg-dhcpmsg.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dhcpmsg-utils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils.Plo@am__quote@
 
 .c.o:
@@ -315,6 +326,34 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+
+dhcpmsg-dhcpmsg.o: dhcpmsg.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dhcpmsg_CFLAGS) $(CFLAGS) -MT dhcpmsg-dhcpmsg.o -MD -MP -MF $(DEPDIR)/dhcpmsg-dhcpmsg.Tpo -c -o dhcpmsg-dhcpmsg.o `test -f 'dhcpmsg.c' || echo '$(srcdir)/'`dhcpmsg.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/dhcpmsg-dhcpmsg.Tpo $(DEPDIR)/dhcpmsg-dhcpmsg.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='dhcpmsg.c' object='dhcpmsg-dhcpmsg.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dhcpmsg_CFLAGS) $(CFLAGS) -c -o dhcpmsg-dhcpmsg.o `test -f 'dhcpmsg.c' || echo '$(srcdir)/'`dhcpmsg.c
+
+dhcpmsg-dhcpmsg.obj: dhcpmsg.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dhcpmsg_CFLAGS) $(CFLAGS) -MT dhcpmsg-dhcpmsg.obj -MD -MP -MF $(DEPDIR)/dhcpmsg-dhcpmsg.Tpo -c -o dhcpmsg-dhcpmsg.obj `if test -f 'dhcpmsg.c'; then $(CYGPATH_W) 'dhcpmsg.c'; else $(CYGPATH_W) '$(srcdir)/dhcpmsg.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/dhcpmsg-dhcpmsg.Tpo $(DEPDIR)/dhcpmsg-dhcpmsg.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='dhcpmsg.c' object='dhcpmsg-dhcpmsg.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dhcpmsg_CFLAGS) $(CFLAGS) -c -o dhcpmsg-dhcpmsg.obj `if test -f 'dhcpmsg.c'; then $(CYGPATH_W) 'dhcpmsg.c'; else $(CYGPATH_W) '$(srcdir)/dhcpmsg.c'; fi`
+
+dhcpmsg-utils.o: utils.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dhcpmsg_CFLAGS) $(CFLAGS) -MT dhcpmsg-utils.o -MD -MP -MF $(DEPDIR)/dhcpmsg-utils.Tpo -c -o dhcpmsg-utils.o `test -f 'utils.c' || echo '$(srcdir)/'`utils.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/dhcpmsg-utils.Tpo $(DEPDIR)/dhcpmsg-utils.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='utils.c' object='dhcpmsg-utils.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dhcpmsg_CFLAGS) $(CFLAGS) -c -o dhcpmsg-utils.o `test -f 'utils.c' || echo '$(srcdir)/'`utils.c
+
+dhcpmsg-utils.obj: utils.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dhcpmsg_CFLAGS) $(CFLAGS) -MT dhcpmsg-utils.obj -MD -MP -MF $(DEPDIR)/dhcpmsg-utils.Tpo -c -o dhcpmsg-utils.obj `if test -f 'utils.c'; then $(CYGPATH_W) 'utils.c'; else $(CYGPATH_W) '$(srcdir)/utils.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/dhcpmsg-utils.Tpo $(DEPDIR)/dhcpmsg-utils.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='utils.c' object='dhcpmsg-utils.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(dhcpmsg_CFLAGS) $(CFLAGS) -c -o dhcpmsg-utils.obj `if test -f 'utils.c'; then $(CYGPATH_W) 'utils.c'; else $(CYGPATH_W) '$(srcdir)/utils.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

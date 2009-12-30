@@ -9,4 +9,12 @@ AC_CONFIG_FILES([
                   src/Makefile
                   tests/Makefile
                   ])
+AC_ARG_ENABLE(check,
+                  [  --enable-check    Libtool linking to allow check],
+                  [case "${enableval}" in
+                    yes) check=true ;;
+                   no)  check=false ;;
+                   *) AC_MSG_ERROR(bad value ${enableval} for --enable-check) ;;
+                  esac],[check=false])
+AM_CONDITIONAL(CHECK, test x$check = xtrue)
 AC_OUTPUT

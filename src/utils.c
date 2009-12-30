@@ -18,6 +18,12 @@
 #include <regex.h>
 #include "dhcpmsg.h"
 
+bool noneth = false;    /* true if mac address is not an ethernet address */
+char *action = NULL;    /* add|del|old */
+char *macaddr = NULL;   /* the mac address */
+char *ip = NULL;        /* the ip address */
+char *hostname = NULL;  /* the optional hostname */
+
 /** check if string matched regex
  * returns:
  * 0 if it matches

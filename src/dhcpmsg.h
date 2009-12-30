@@ -16,12 +16,6 @@
 
 #define MAX_BUFF_SIZE 1024
 
-bool noneth = false;    /* true if mac address is not an ethernet address */
-char *action = NULL;    /* add|del|old */
-char *macaddr = NULL;   /* the mac address */
-char *ip = NULL;        /* the ip address */
-char *hostname = NULL;  /* the optional hostname */
-
 int regex_match (const char *regex, char *string);
 int check_mac ( char *mac_address );
 int do_args (int argc, char *argv[], char *envp[]);

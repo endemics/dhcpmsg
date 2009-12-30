@@ -19,7 +19,7 @@
 int main (int argc, char *argv[], char *envp[])
 {
   extern bool noneth;
-  extern char *action, *mac, *ip, *hostname;
+  extern char *action, *macaddr, *ip, *hostname;
 
   char *str_json;
 
