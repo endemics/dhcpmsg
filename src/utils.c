@@ -354,7 +354,7 @@ char *http_verb_from_action ( char *action_type )
   else if ( strcmp("old", action_type) == 0 )
     return "PUT";
   else if ( strcmp("del", action_type) == 0 )
-    return "UPDATE";
+    return "DELETE";
  
   return NULL;
 }
