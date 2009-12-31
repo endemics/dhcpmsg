@@ -170,7 +170,8 @@ char * keyvalue_from_env ( char *string, const char *env_name, const char *name 
 }
 
 /** check environment variables, set variable list accordingly if needed
- * and returns the values as a "key":"value" list
+ * in res as a "key":"value" list
+ * return the size of the string res
  * environments variables that can be set are:
  * - DNSMASQ_CLIENT_ID
  * - DNSMASQ_DOMAIN
@@ -276,6 +277,7 @@ int do_env ( char *action_type, char **res )
 }
 
 /** output json format string
+ *  result string will need to be free'd after use
  */
 char *json_output ( char *keyvaluestring )
 {
@@ -302,7 +304,11 @@ char *json_output ( char *keyvaluestring )
   return strdup ( json );
 }
 
-/*
+/* read the configuration from configfile
+ * set the variable:
+ * - uri
+ * (variables need to be free'd after use)
+ * return 0 if successfull, 1 otherwise
  * thanks to http://blog.fupps.com/2009/09/17/reading-configuration-files-with-libconfig/
  */
 int read_config ( char *configfile )
@@ -319,10 +325,10 @@ int read_config ( char *configfile )
   if (!config_read_file(cf, configfile))
   {
     /* need a more recent version
-     *fprintf( stderr, "%s:%d - %s\n",
-     *  config_error_file(cf),
-     *  config_error_line(cf),
-     *  config_error_text(cf));
+    fprintf( stderr, "%s:%d - %s\n",
+      config_error_file(cf),
+      config_error_line(cf),
+      config_error_text(cf));
      */
     fprintf( stderr, "Error in config line: %d - %s\n",
       config_error_line(cf),
@@ -346,6 +352,7 @@ int read_config ( char *configfile )
  * - add is POST (create)
  * - old is PUT (update)
  * - del is DELETE
+ * return NULL if none of the above
  */
 char *http_verb_from_action ( char *action_type )
 {
