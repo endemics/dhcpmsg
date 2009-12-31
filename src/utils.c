@@ -124,9 +124,11 @@ int do_args (int argc, char *argv[], char *envp[])
   }
 }
 
-/*
+/** extract name:value from environment variable env_name,
+ * adds it to string (comma separated list of "key":"value") if not null
+ * and returns string
  */
-char * json_from_env ( char *string, const char *env_name, const char *name )
+char * keyvalue_from_env ( char *string, const char *env_name, const char *name )
 {
   char *var = NULL;
   char buffer[MAX_BUFF_SIZE] = "";
@@ -141,7 +143,7 @@ char * json_from_env ( char *string, const char *env_name, const char *name )
   if ( var != NULL && strlen (string) == 0 ) /* start from scratch */
   {
     if ( (strlen (name) + strlen (var) + 1) < sizeof(buffer) - 1 ) 
-      sprintf (buffer, "%s:%s", name, var);
+      sprintf (buffer, "\"%s\":\"%s\"", name, var);
     else
     {
       fprintf(stderr, "key:value pair to big to fit in buffer\n");
@@ -151,7 +153,7 @@ char * json_from_env ( char *string, const char *env_name, const char *name )
   else if ( var != NULL && strlen (string) != 0 ) /* add stuff to existing value */
   {
     if ( (strlen (name) + strlen (var) + strlen (string) + 2)  < sizeof(buffer)-1 )
-      sprintf (buffer, "%s,%s:%s", string, name, var);
+      sprintf (buffer, "%s,\"%s\":\"%s\"", string, name, var);
     else
     {
       fprintf(stderr, "cannot append another key:value\n");
@@ -168,7 +170,7 @@ char * json_from_env ( char *string, const char *env_name, const char *name )
 }
 
 /** check environment variables, set variable list accordingly if needed
- * and returns the values as json data
+ * and returns the values as a "key":"value" list
  * environments variables that can be set are:
  * - DNSMASQ_CLIENT_ID
  * - DNSMASQ_DOMAIN
@@ -190,19 +192,19 @@ int do_env ( char *action_type, char **res )
   extern bool known;  /* true if address is statically assigned */
 
   char *clientid, *domain;
-  char json[MAX_BUFF_SIZE] = "";
+  char keyvaluelist[MAX_BUFF_SIZE] = "";
   char buff[MAX_BUFF_SIZE] = "",buff2[MAX_BUFF_SIZE] = "";  /* temp buffers */
   int i = 0;  /* holy loop counter */
   int n = 0;
 
-  json_from_env ( json, "DNSMASQ_CLIENT_ID", "client_id" );
-  json_from_env ( json, "DNSMASQ_DOMAIN", "domain" );
-  json_from_env ( json, "DNSMASQ_RELAY_ADDRESS", "relay_address" );
-  json_from_env ( json, "DNSMASQ_TIME_REMAINING", "time_remaining" );
+  keyvalue_from_env ( keyvaluelist, "DNSMASQ_CLIENT_ID", "client_id" );
+  keyvalue_from_env ( keyvaluelist, "DNSMASQ_DOMAIN", "domain" );
+  keyvalue_from_env ( keyvaluelist, "DNSMASQ_RELAY_ADDRESS", "relay_address" );
+  keyvalue_from_env ( keyvaluelist, "DNSMASQ_TIME_REMAINING", "time_remaining" );
 
   if ( getenv("DNSMASQ_TAGS") )
   {
-    json_from_env ( json, "DNSMASQ_TAGS", "tags");
+    keyvalue_from_env ( keyvaluelist, "DNSMASQ_TAGS", "tags");
     if ( regex_match ( "^(..*  *)*known(  *..*)*$", getenv("DNSMASQ_TAGS") ) == 0 )
     {
       known = true;
@@ -214,19 +216,19 @@ int do_env ( char *action_type, char **res )
     fprintf(stderr,
       "Error: both environment variables DNSMASQ_LEASE_LENGTH %s",
       "and DNSMASQ_LEASE_EXPIRES are defined\n");
-  json_from_env ( json, "DNSMASQ_LEASE_LENGTH", "lease_length" );
-  json_from_env ( json, "DNSMASQ_LEASE_EXPIRES", "lease_expires" );
+  keyvalue_from_env ( keyvaluelist, "DNSMASQ_LEASE_LENGTH", "lease_length" );
+  keyvalue_from_env ( keyvaluelist, "DNSMASQ_LEASE_EXPIRES", "lease_expires" );
 
   if ( strcmp (action_type, "del") == 0 )
   {
-    json_from_env ( json, "DNSMASQ_INTERFACE", "interface" );
+    keyvalue_from_env ( keyvaluelist, "DNSMASQ_INTERFACE", "interface" );
   }
 
   if ( strcmp (action_type, "add") == 0 )
   {
-    json_from_env ( json, "DNSMASQ_INTERFACE", "interface" );
-    json_from_env ( json, "DNSMASQ_VENDOR_CLASS", "vendor_class" );
-    json_from_env ( json, "DNSMASQ_SUPPLIED_HOSTNAME", "supplied_hostname" );
+    keyvalue_from_env ( keyvaluelist, "DNSMASQ_INTERFACE", "interface" );
+    keyvalue_from_env ( keyvaluelist, "DNSMASQ_VENDOR_CLASS", "vendor_class" );
+    keyvalue_from_env ( keyvaluelist, "DNSMASQ_SUPPLIED_HOSTNAME", "supplied_hostname" );
 
     for (i = 0;  ;i++)
     {
@@ -234,7 +236,7 @@ int do_env ( char *action_type, char **res )
       sprintf(buff2,"user_class%u", i);
       if (getenv(buff))
       {
-        json_from_env(  json, buff, buff2);
+        keyvalue_from_env(  keyvaluelist, buff, buff2);
       }
       else
         break;
@@ -244,13 +246,13 @@ int do_env ( char *action_type, char **res )
 
   if ( strcmp (action_type, "old") == 0 )
   {
-    json_from_env ( json, "DNSMASQ_VENDOR_CLASS", "vendor_class" );
-    json_from_env ( json, "DNSMASQ_SUPPLIED_HOSTNAME", "supplied_hostname" );
-    json_from_env ( json, "DNSMASQ_OLD_HOSTNAME", "old_hostname" );
+    keyvalue_from_env ( keyvaluelist, "DNSMASQ_VENDOR_CLASS", "vendor_class" );
+    keyvalue_from_env ( keyvaluelist, "DNSMASQ_SUPPLIED_HOSTNAME", "supplied_hostname" );
+    keyvalue_from_env ( keyvaluelist, "DNSMASQ_OLD_HOSTNAME", "old_hostname" );
 
     if ( getenv("DNSMASQ_INTERFACE") ) /* can be missing */
     {
-      json_from_env ( json, "DNSMASQ_INTERFACE", "interface" );
+      keyvalue_from_env ( keyvaluelist, "DNSMASQ_INTERFACE", "interface" );
     }
 
     for (i = 0;  ;i++)
@@ -259,18 +261,46 @@ int do_env ( char *action_type, char **res )
       sprintf(buff2,"user_class%u", i);
       if (getenv(buff))
       {
-        json_from_env(  json, buff, buff2);
+        keyvalue_from_env(  keyvaluelist, buff, buff2);
       }
       else
         break;
     }
   }
 
-  n = strlen (json);
+  n = strlen (keyvaluelist);
   *res = calloc (MAX_BUFF_SIZE, sizeof(char));
-  memcpy(*res, json, n);
+  memcpy(*res, keyvaluelist, n);
 
   return n;
+}
+
+/** output json format string
+ */
+char *json_output ( char *keyvaluestring )
+{
+  extern bool known;
+  extern char *macaddr, *ip, *hostname;
+
+  char json[MAX_BUFF_SIZE] = "";
+  char *staticaddr = "no";
+
+  if ( known )
+    staticaddr = "yes";
+
+  if ( hostname )
+  {
+    sprintf ( json, "{\"mac\":\"%s\",\"ip\":\"%s\",\"hostname\":\"%s\",\"static\":\"%s\",%s}\n",
+        macaddr, ip, hostname, staticaddr, keyvaluestring );
+  }
+  else
+  {
+    sprintf ( json, "{\"mac\":\"%s\",\"ip\":\"%s\",\"static\":\"%s\",%s}\n",
+        macaddr, ip, staticaddr, keyvaluestring );
+  }
+
+  return json;
+
 }
 
 /*

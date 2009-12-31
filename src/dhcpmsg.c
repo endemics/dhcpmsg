@@ -58,6 +58,8 @@ int main (int argc, char *argv[], char *envp[])
 
     printf ("environment variables:\t%s\n\n", str_json);
 
+    printf ( "%s", json_output (str_json) );
+
     return 0;
   }
 }
