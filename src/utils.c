@@ -352,16 +352,16 @@ int read_config ( char *configfile )
  * - add is POST (create)
  * - old is PUT (update)
  * - del is DELETE
- * return NULL if none of the above
+ * return 0 if none of the above
  */
-char *http_verb_from_action ( char *action_type )
+int http_verb_from_action ( char *action_type )
 {
   if ( strcmp("add", action_type) == 0 )
-    return "POST";
+    return HTTP_POST;
   else if ( strcmp("old", action_type) == 0 )
-    return "PUT";
+    return HTTP_PUT;
   else if ( strcmp("del", action_type) == 0 )
-    return "DELETE";
+    return HTTP_DELETE;
  
-  return NULL;
+  return 0;
 }

@@ -16,12 +16,18 @@
 
 #define MAX_BUFF_SIZE 1024
 
+#define HTTP_PUT  1
+#define HTTP_POST 2
+#define HTTP_GET  3
+#define HTTP_DELETE 4
+
 int regex_match ( const char *regex, char *string );
 int check_mac ( char *mac_address );
 int do_args ( int argc, char *argv[], char *envp[] );
 int do_env ( char *action_type, char **res );
 char *json_output ( char *keyvaluestring );
 int read_config ( char *configfile );
-char *http_verb_from_action ( char *action_type );
+int http_verb_from_action ( char *action_type );
+int http_request ( char *uri, int http_verb, char *data );
 
 #endif /* DHCPMSG_H */

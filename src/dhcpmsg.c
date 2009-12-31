@@ -23,8 +23,10 @@ int main (int argc, char *argv[], char *envp[])
   extern bool noneth, known;
   extern char *action, *macaddr, *ip, *hostname, *uri;
 
+  char buff[MAX_BUFF_SIZE] = "";
   char *str_json;
-  char *http_verb;
+  int http_verb;
+  int res;
 
   if ( do_args (argc, argv, envp) == 1 )
     return 1;
@@ -51,8 +53,8 @@ int main (int argc, char *argv[], char *envp[])
 
     do_env ( action, &str_json );
 
-    printf ("%s %s\n", http_verb, uri);
-    printf ( "%s", json_output (str_json) );
+    sprintf ( buff, "%s/by-mac/%s", uri, macaddr );
+    res = http_request ( buff, http_verb, json_output ( str_json ) );
 
     free(str_json);
     free(uri);

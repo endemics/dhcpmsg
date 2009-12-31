@@ -22,6 +22,10 @@ AC_ARG_WITH(config,
                   [ with_config="$withval" ],
                   [ with_config="/etc/dhcpmsg.conf"])
 AC_DEFINE_UNQUOTED([CONFIG_FILE], ["$with_config"], [Path to the config file])
-AC_CHECK_LIB([config], [config_init], [LIBCONFIG=-lconfig])
+AC_CHECK_LIB(config,
+                  [config_init])
+AC_CHECK_LIB(curl,
+                  [curl_easy_init])
 AC_SUBST([LIBCONFIG])
+AC_SUBST([LIBCURL])
 AC_OUTPUT
