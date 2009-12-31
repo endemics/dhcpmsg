@@ -54,6 +54,9 @@ int main (int argc, char *argv[], char *envp[])
     printf ("%s %s\n", http_verb, uri);
     printf ( "%s", json_output (str_json) );
 
+    free(str_json);
+    free(uri);
+
     return 0;
   }
 }

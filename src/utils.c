@@ -299,7 +299,7 @@ char *json_output ( char *keyvaluestring )
         macaddr, ip, staticaddr, keyvaluestring );
   }
 
-  return json;
+  return strdup ( json );
 }
 
 /*
