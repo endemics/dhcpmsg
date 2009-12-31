@@ -300,7 +300,6 @@ char *json_output ( char *keyvaluestring )
   }
 
   return json;
-
 }
 
 /*
@@ -343,3 +342,19 @@ int read_config ( char *configfile )
   return 0;
 }
 
+/** returns the correct http verb for each action type:
+ * - add is POST (create)
+ * - old is PUT (update)
+ * - del is DELETE
+ */
+char *http_verb_from_action ( char *action_type )
+{
+  if ( strcmp("add", action_type) == 0 )
+    return "POST";
+  else if ( strcmp("old", action_type) == 0 )
+    return "PUT";
+  else if ( strcmp("del", action_type) == 0 )
+    return "UPDATE";
+ 
+  return NULL;
+}

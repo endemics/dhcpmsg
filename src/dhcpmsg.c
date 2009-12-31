@@ -24,6 +24,7 @@ int main (int argc, char *argv[], char *envp[])
   extern char *action, *macaddr, *ip, *hostname, *uri;
 
   char *str_json;
+  char *http_verb;
 
   if ( do_args (argc, argv, envp) == 1 )
     return 1;
@@ -35,29 +36,22 @@ int main (int argc, char *argv[], char *envp[])
       return 1;
     }
 
-    if ( uri )
-      printf ("uri for the webapp is: %s\n",uri);
-    else
+    if ( ! uri )
     {
       fprintf (stderr, "uri not defined in configuration file, aborting\n");
       return 1;
     }
 
+    /* FIXME: no use for this? */
     if ( noneth )
       printf ("protocol type for the mac address is non ethernet\n");
+    /* END FIXME */
 
-    if ( argc == 4 )
-      printf ("action:\t%s\nmac:\t%s\nip:\t%s\n", action, macaddr, ip);
-    else if ( argc == 5 )
-      printf ("action:\t%s\nmac:\t%s\nip:\t%s\nhostname:\t%s\n", action, macaddr, ip,hostname);
+    http_verb = http_verb_from_action ( action );
 
     do_env ( action, &str_json );
 
-    if ( known )
-      printf ("address statically assigned\n");
-
-    printf ("environment variables:\t%s\n\n", str_json);
-
+    printf ("%s %s\n", http_verb, uri);
     printf ( "%s", json_output (str_json) );
 
     return 0;

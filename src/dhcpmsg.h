@@ -22,5 +22,6 @@ int do_args ( int argc, char *argv[], char *envp[] );
 int do_env ( char *action_type, char **res );
 char *json_output ( char *keyvaluestring );
 int read_config ( char *configfile );
+char *http_verb_from_action ( char *action_type );
 
 #endif /* DHCPMSG_H */
