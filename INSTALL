@@ -1,0 +1,48 @@
+Dependencies
+============
+
+To build this software you will need the following dependencies:
+- libconfig (tested with version 1.3.2-2 on debian)
+- curl (tested with version 7.19.7-1 on debian)
+- check (optional, for the test suite, tested with version 0.9.6-2 on debian)
+
+On debian you can install the above dependencies with:
+
+  sudo apt-get install libcurl4-gnutls-dev check libconfig8-dev
+
+To run, this software depends on a web application where it pushes the dhcp
+information. It also naturally depends on dnsmasq since it is designed to be
+used by dnsmasq.
+
+Please note that in order to get the informations between "static" and
+dynamic address allocations, you will need dnsmasq with a version >= 2.52
+
+Building and installing
+=======================
+
+Since this software uses autotools, it should build with the usual
+./configure && make && make install
+
+They are a lot of options you can change that are detailled in the output of
+./configure --help
+
+The non-usual ones are:
+--enable-check  this will use libtool to compile dhcpmsg with the external
+  functions as .la so you can run the test suite using `make check'. The
+  default usage is to build a single binary since this is how it can be used
+  by dnsmasq
+
+--with-config=/path/to/config this allow to override the default path for the
+  configuration file (/etc/dhcpmsg.cfg)
+
+Configuration and usage
+=======================
+
+You will need to create a configuration file and place it either in /etc/ under
+the name dhcpmsg.cfg or any other alternate name specified by --with-config.
+
+An example configuration file is present in the doc/ directory.
+
+You will also need:
+- the webapp to be installed
+- dnsmasq to be configured with the --script option pointing to the dhcpmsg binary

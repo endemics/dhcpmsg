@@ -1,0 +1,41 @@
+dhcpmsg is a c program designed to be called by dnsmasq 
+(http://www.thekelleys.org.uk/dnsmasq/) every time a lease change occurs.
+
+It will then publish the leases informations to a RESTful web application. At
+first, the application will allow to visualise the lease informations. The
+final target for that web application however is to help automatic ressource
+discovery for unknown machines through dynamic dhcp and to facilitate automatic
+deployment via pxe.
+
+Other tools such as an automatic hardware inventory mini-operating system are
+also planned. Every tool in the suite will aim at being well defined and
+interchangeable. All datas will be exported via publicly defined RESTful APIs
+so elements will be loosely linked.
+
+For now, the RESTful web application working together with dhcpmsg is still in
+the works, and not yet ready to be published as of 31/12/2009.
+
+If you want to create a stub for tests purposes or a replacement application,
+you can use the following API (subject to changes):
+
+create a new entry
+------------------
+http verb: POST
+uri: http://<hostname>[:<port>][/<path>]/by-mac/<mac address>
+data: json data containing at least the following fields:
+  - "mac": a colon (":") separated mac address
+  - "ip": an ipv4 IP address
+
+update an existing entry
+------------------------
+http verb: PUT
+uri: http://<hostname>[:<port>][/<path>]/by-mac/<mac address>
+data: json data containing at least the following fields:
+  - "mac": a colon (":") separated mac address
+  - "ip": an ipv4 IP address
+
+delete an existing entry
+------------------------
+http verb: DELETE
+uri: http://<hostname>[:<port>][/<path>]/by-mac/<mac address>
+data: nil
