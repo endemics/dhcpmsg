@@ -6,6 +6,8 @@ To build this software you will need the following dependencies:
 - curl (tested with version 7.19.7-1 on debian)
 - check (optional, for the test suite, tested with version 0.9.6-2 on debian)
 
+You will also need the autotools, make, gcc etc.
+
 On debian you can install the above dependencies with:
 
   sudo apt-get install libcurl4-gnutls-dev check libconfig8-dev
@@ -20,8 +22,8 @@ dynamic address allocations, you will need dnsmasq with a version >= 2.52
 Building and installing
 =======================
 
-Since this software uses autotools, it should build with the usual
-./configure && make && make install
+Since this software uses autotools, it should build with the following:
+autoreconf --install && ./configure && make && make install
 
 They are a lot of options you can change that are detailled in the output of
 ./configure --help
