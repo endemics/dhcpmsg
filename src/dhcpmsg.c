@@ -56,9 +56,16 @@ int main (int argc, char *argv[], char *envp[])
     sprintf ( buff, "%s/by-mac/%s", uri, macaddr );
     res = http_request ( buff, http_verb, json_output ( str_json ) );
 
+    /* FIXME: use syslog to report this since dnsmasq will drop stderr */
+    if ( res != 0 )
+    {
+      fprintf (stderr, "failed pushing content to %s:\n%s\n",
+          uri, json_output ( str_json ) );
+    }
+
     free(str_json);
     free(uri);
 
-    return 0;
+    return res;
   }
 }

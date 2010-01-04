@@ -17,6 +17,8 @@
 
 #include "dhcpmsg.h"
 
+#define CURL_TIMEOUT 10
+
 int curldatalen = 0;
 
 /** curl readfunction callback
@@ -50,6 +52,9 @@ curlreader(void *ptr, size_t size, size_t nmemb, void *stream)
 int http_request ( char *uri, int http_verb, char *data )
 {
   extern int curldatalen;
+
+  long http_code = 0;
+  int ret = 1;  /* return code */
 
   CURL *curl;
   CURLcode res;
@@ -95,14 +100,24 @@ int http_request ( char *uri, int http_verb, char *data )
     }
 
     /* FIXME need to add support for timeouts in the config file */
-    curl_easy_setopt( curl, CURLOPT_TIMEOUT, 10 );
+    curl_easy_setopt( curl, CURLOPT_TIMEOUT, CURL_TIMEOUT );
 
     res = curl_easy_perform ( curl );
+
+    curl_easy_getinfo ( curl, CURLINFO_RESPONSE_CODE, &http_code );
+
+    /* FIXME for now only consider 200 to be ok.
+     * Will need the app to provide some json return value
+     */
+    if (http_code == 200 && res != CURLE_ABORTED_BY_CALLBACK )
+    {
+      ret = 0;
+    }
 
     /* always cleanup */ 
     curl_easy_cleanup ( curl );
 
-    return res;
+    return ret;
   }
 
   return 1;
