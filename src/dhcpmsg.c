@@ -53,7 +53,7 @@ int main (int argc, char *argv[], char *envp[])
 
     do_env ( action, &str_json );
 
-    sprintf ( buff, "%s/by-mac/%s", uri, macaddr );
+    sprintf ( buff, "%s/%s/%s", uri, URI_PATH, macaddr );
     res = http_request ( buff, http_verb, json_output ( str_json ) );
 
     /* FIXME: use syslog to report this since dnsmasq will drop stderr */
