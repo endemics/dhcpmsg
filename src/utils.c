@@ -330,7 +330,8 @@ int read_config ( char *configfile )
       config_error_line(cf),
       config_error_text(cf));
      */
-    fprintf( stderr, "Error in config line: %d - %s\n",
+    fprintf( stderr, "Error in config %s:%d - %s\n",
+      configfile,
       config_error_line(cf),
       config_error_text(cf));
 
