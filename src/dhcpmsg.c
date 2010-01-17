@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <strings.h>
 
 #include "dhcpmsg.h"
 #include "../config.h"  /* for CONFIG_FILE  */
@@ -21,7 +22,7 @@
 int main (int argc, char *argv[], char *envp[])
 {
   extern bool noneth, known;
-  extern char *action, *macaddr, *ip, *hostname, *uri;
+  extern char *action, *macaddr, *ip, *hostname, *uri, *uri_data_path;
 
   char buff[MAX_BUFF_SIZE] = "";
   char *str_json;
@@ -53,14 +54,22 @@ int main (int argc, char *argv[], char *envp[])
 
     do_env ( action, &str_json );
 
-    sprintf ( buff, "%s/%s/%s", uri, URI_PATH, macaddr );
+    if ( strlen (uri_data_path) == 0 || ! uri_data_path )
+    {
+      /* FIXME should send to syslog as info */
+      fprintf (stderr, "no uri data path defined in configuration file using default value \"%s\"\n", URI_DATA_PATH);
+      sprintf ( buff, "%s%s/%s", uri, URI_DATA_PATH, macaddr );
+    } else {
+      sprintf ( buff, "%s%s/%s", uri, uri_data_path, macaddr );
+    }
+      
     res = http_request ( buff, http_verb, json_output ( str_json ) );
 
     /* FIXME: use syslog to report this since dnsmasq will drop stderr */
     if ( res != 0 )
     {
       fprintf (stderr, "failed pushing content to %s:\n%s\n",
-          uri, json_output ( str_json ) );
+          buff, json_output ( str_json ) );
     }
 
     free(str_json);

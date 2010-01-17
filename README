@@ -21,7 +21,7 @@ you can use the following API (subject to changes):
 create a new entry
 ------------------
 http verb: POST
-uri: http://<hostname>[:<port>][/<path>]/by-mac/<mac address>
+uri: http://<hostname>[:<port>][/<data path>]/<mac address>
 data: json data containing at least the following fields:
   - "mac": a colon (":") separated mac address
   - "ip": an ipv4 IP address
@@ -29,7 +29,7 @@ data: json data containing at least the following fields:
 update an existing entry
 ------------------------
 http verb: PUT
-uri: http://<hostname>[:<port>][/<path>]/by-mac/<mac address>
+uri: http://<hostname>[:<port>][/<data path>]/<mac address>
 data: json data containing at least the following fields:
   - "mac": a colon (":") separated mac address
   - "ip": an ipv4 IP address
@@ -37,5 +37,5 @@ data: json data containing at least the following fields:
 delete an existing entry
 ------------------------
 http verb: DELETE
-uri: http://<hostname>[:<port>][/<path>]/by-mac/<mac address>
+uri: http://<hostname>[:<port>][/<data path>]/<mac address>
 data: nil

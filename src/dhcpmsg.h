@@ -15,7 +15,7 @@
 #define DHCPMSG_H
 
 #define MAX_BUFF_SIZE 1024
-#define URI_PATH "macs"
+#define URI_DATA_PATH "/macs"
 
 #define HTTP_PUT  1
 #define HTTP_POST 2

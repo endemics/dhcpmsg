@@ -27,6 +27,8 @@ char *macaddr = NULL;   /* the mac address */
 char *ip = NULL;        /* the ip address */
 char *hostname = NULL;  /* the optional hostname */
 char *uri = NULL;       /* the webapp uri */
+char *uri_data_path = NULL;
+                        /* path to the json api on the webapp */
 
 /** check if string matched regex
  * returns:
@@ -315,7 +317,7 @@ int read_config ( char *configfile )
 {
   config_t cfg, *cf;
   const char *buf;
-  extern char *uri;
+  extern char *uri, *uri_data_path;
 
   int n = 0;
 
@@ -344,6 +346,14 @@ int read_config ( char *configfile )
   n = strlen (buf);
   uri = calloc (n+1, sizeof(char));
   memcpy(uri, buf, n);
+
+  buf = "";
+  config_lookup_string(cf, "uri_data_path", &buf);
+
+  n = strlen (buf);
+  uri_data_path = calloc (n+1, sizeof(char));
+  memcpy(uri_data_path, buf, n);
+
   config_destroy(cf);
 
   return 0;
